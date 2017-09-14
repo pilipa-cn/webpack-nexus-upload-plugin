@@ -2,6 +2,14 @@
   "name": "webpack-nexus-upload-plugin",
   "version": "0.1.0",
   "description": "upload webpack compiled file with your own way, such as OSS, S3 etc.",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:pilipa-cn/webpack-nexus-upload-plugin.git"
+  },
+  "bugs": {
+    "url": "github.com/pilipa-cn/webpack-nexus-upload-plugin/issues"
+  },
+  "homepage": "https://github.com/pilipa-cn/webpack-nexus-upload-plugin#readme",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,7 +19,7 @@
     "plugin",
     "upload"
   ],
-  "author": "oyhanyu",
+  "author": "pilipa-cn oyhanyu",
   "license": "MIT",
   "dependencies": {
     "ali-oss": "^4.10.1"

@@ -9,7 +9,7 @@ use this plugin, the webpack compiled files are processed again. Upload to OSS, 
 # Installation
 
 ```
-$ npm --save source-uploader-webpack-plugin
+$ npm --save webpack-nexus-upload-plugin
 ```
 
 # Usage

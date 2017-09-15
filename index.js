@@ -5,7 +5,7 @@
 
 var fs = require('fs');
 var uploadArr = []
-function uploadFiles (options, filename, source) {
+function uploadFiles (options, filename, source, callback) {
     var result;
     try {
         if (options.upload && typeof options.upload === 'function') {
@@ -14,69 +14,39 @@ function uploadFiles (options, filename, source) {
             // ali oss default
             var OSS = require('ali-oss');
             var client = new OSS.Wrapper(options.aliOSS);
-            result = client.put(options.aliOSS.fileDir + filename, new Buffer(source, "utf8"))
+            result = client.put(options.aliOSS.fileDir + filename, source)
                 .then(function (val) {
-                    console.log(filename + ' upload success, url= %j', val.url);
+                    console.log(filename + ' upload success, url=%j', val.url);
                     return true;
                 })
                 .catch (function (err) {
-                    console.log(filename + ' upload failed: error = %j', err.toString());
+                    console.log(filename + ' upload failed: error=%j', err.toString());
+                    callback(new Error('webpack build failed, reason: file' + filename + ' upload failed!'))
                     return false;
                 });
             uploadArr.push(result);
         }
     } catch (e) {
-        console.log('remote upload failed!')
+      callback(new Error('remote upload failed!'))
     }
-    return result
 }
 function apply(options, compiler) {
     //
-    compiler.plugin("emit", function(compilation, callback) {
+    compiler.plugin("after-emit", function(compilation, callback) {
         console.log("The compilation is going to handle files...");
-        var basePath = options.path,
-            indexHtmlCreated = false,
-            indexHtmlName = '',
-            indexHtmlSource = null;
+        var basePath = options.path;
         for (var filename in compilation.assets) {
-            var source = compilation.assets[filename].source()
-            // remove favicon hash
-            /*if (filename.indexOf('favicon') > -1) {
-             filename = 'favicon.ico'
-             }*/
-            if (filename.indexOf('\.html') > -1) {
-                indexHtmlName = filename;
-                indexHtmlSource = source;
-            }
-            uploadFiles(options, filename, source)
+            var stream = fs.createReadStream(basePath + '/' + filename);
+            uploadFiles(options, filename, stream, callback)
         }
         Promise.all(uploadArr).then((result) => {
             if (result.length && !result.includes(false)) {
-                if (!options.createLocal && !indexHtmlCreated && indexHtmlName !== '' && indexHtmlSource) {
-                    fs.readdir(basePath, function (err) {
-                        if(err) {
-                            fs.mkdir(basePath, function (err) {
-                                if(err)
-                                    throw err;
-                                console.log('create local dir success')
-                            });
-                        }
-                    });
-                    fs.writeFile(basePath + '/' + indexHtmlName, indexHtmlSource, function(err) {
-                        if (err) {
-                            throw err;
-                        }
-                        indexHtmlCreated = true;
-                    })
-                }
+              console.log('build success')
+              callback();
             } else {
-                console.log('remote upload failed!', result)
+              callback(new Error('webpack build failed, reason: some files upload failed!'))
             }
         });
-        // create local files by @options.createLocal is true
-        if (options.createLocal) {
-            callback();
-        }
     });
 }
 module.exports = function(options) {

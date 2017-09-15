@@ -1,6 +1,6 @@
 {
   "name": "webpack-nexus-upload-plugin",
-  "version": "0.1.10",
+  "version": "1.0.0",
   "description": "upload webpack compiled file with your own way, such as OSS, S3 etc.",
   "repository": {
     "type": "git",

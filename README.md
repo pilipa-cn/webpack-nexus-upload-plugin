@@ -26,8 +26,7 @@ const SourceUploaderWebpackPlugin = require('source-uploader-webpack-plugin');
     // ...
     plugins: [
       new SourceUploaderWebpackPlugin({
-      	  path: paths.appBuild, 
-      	  createLocal: false, 
+      	  path: paths.appBuild,
       	  aliOSS: {
               region: '<Your region>',
               accessKeyId: '<Your AccessKeyId>',
@@ -49,8 +48,6 @@ const SourceUploaderWebpackPlugin = require('source-uploader-webpack-plugin');
 The plugin accepts the following options:
 
 - `path`: Your application build path(output->path), for generate the local html file.
-
-- `createLocal`: Generate local file. `boolean` Defaults to `false`.
 
 - `aliOSS`: aliOSS options.
 
